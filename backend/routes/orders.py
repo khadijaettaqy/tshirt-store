@@ -61,7 +61,8 @@ def create():
             'client_secret': client_secret
         }), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @orders_bp.route('/', methods=['GET'])
@@ -80,7 +81,8 @@ def list_orders():
             'pages': (total + limit - 1) // limit
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @orders_bp.route('/<order_id>', methods=['GET'])
@@ -96,7 +98,8 @@ def get_order(order_id):
             return jsonify({'error': 'Not authorized'}), 403
         return jsonify({'order': _serialize_order(order)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @orders_bp.route('/<order_id>/confirm-payment', methods=['POST'])
@@ -120,7 +123,8 @@ def confirm_payment(order_id):
         order = find_order_by_id(db, order_id)
         return jsonify({'order': _serialize_order(order)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @orders_bp.route('/<order_id>/tracking', methods=['GET'])
@@ -141,4 +145,5 @@ def tracking(order_id):
             'updated_at': order.get('updated_at').isoformat() if order.get('updated_at') else None
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500

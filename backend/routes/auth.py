@@ -63,7 +63,8 @@ def register():
             'user': _user_to_dict(user)
         }), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @auth_bp.route('/login', methods=['POST'])
@@ -94,7 +95,8 @@ def login():
             'user': _user_to_dict(user)
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @auth_bp.route('/logout', methods=['POST'])
@@ -106,7 +108,8 @@ def logout():
         jwt_blocklist.add(jti)
         return jsonify({'message': 'Logged out successfully'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @auth_bp.route('/refresh', methods=['POST'])
@@ -124,7 +127,8 @@ def refresh():
         )
         return jsonify({'access_token': access_token}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @auth_bp.route('/forgot-password', methods=['POST'])
@@ -148,7 +152,8 @@ def forgot_password():
 
         return jsonify({'message': 'If the email exists, a reset link has been sent'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @auth_bp.route('/reset-password', methods=['POST'])
@@ -181,4 +186,5 @@ def reset_password():
         })
         return jsonify({'message': 'Password reset successfully'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500

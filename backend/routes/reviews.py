@@ -42,13 +42,15 @@ def create():
 
         db = current_app.db
         # Check for existing review
-        existing = db.reviews.find_one({'product_id': {'$oid': product_id}, 'user_id': {'$oid': user_id}})
+        from bson import ObjectId as _ObjId
+        existing = db.reviews.find_one({'product_id': _ObjId(product_id), 'user_id': _ObjId(user_id)})
 
         review = create_review(db, product_id, user_id, rating, comment)
         add_review_to_product(db, product_id, str(review['_id']), int(rating))
         return jsonify({'review': _serialize_review(review, db)}), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @reviews_bp.route('/product/<product_id>', methods=['GET'])
@@ -65,7 +67,8 @@ def get_reviews(product_id):
             'pages': (total + limit - 1) // limit
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @reviews_bp.route('/<review_id>', methods=['PUT'])
@@ -86,7 +89,8 @@ def update(review_id):
         review = find_review_by_id(db, review_id)
         return jsonify({'review': _serialize_review(review, db)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @reviews_bp.route('/<review_id>', methods=['DELETE'])
@@ -103,7 +107,8 @@ def delete(review_id):
         delete_review(db, review_id)
         return jsonify({'message': 'Review deleted'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @reviews_bp.route('/<review_id>/helpful', methods=['POST'])
@@ -115,4 +120,5 @@ def helpful(review_id):
         mark_helpful(db, review_id, user_id)
         return jsonify({'message': 'Marked as helpful'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500

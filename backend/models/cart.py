@@ -30,9 +30,13 @@ def add_item_to_cart(db, user_id, product_id, size, color, quantity):
         db.carts.update_one(
             {
                 'user_id': ObjectId(user_id),
-                'items.product_id': ObjectId(product_id),
-                'items.size': size,
-                'items.color': color
+                'items': {
+                    '$elemMatch': {
+                        'product_id': ObjectId(product_id),
+                        'size': size,
+                        'color': color
+                    }
+                }
             },
             {
                 '$inc': {'items.$.quantity': quantity},
@@ -80,9 +84,13 @@ def update_cart_item_quantity(db, user_id, product_id, size, color, quantity):
     db.carts.update_one(
         {
             'user_id': ObjectId(user_id),
-            'items.product_id': ObjectId(product_id),
-            'items.size': size,
-            'items.color': color
+            'items': {
+                '$elemMatch': {
+                    'product_id': ObjectId(product_id),
+                    'size': size,
+                    'color': color
+                }
+            }
         },
         {
             '$set': {

@@ -37,7 +37,8 @@ def get():
         cart = get_cart(db, user_id)
         return jsonify({'cart': _serialize_cart(cart, db)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @cart_bp.route('/add', methods=['POST'])
@@ -62,7 +63,8 @@ def add():
         cart = add_item_to_cart(db, user_id, product_id, size, color, quantity)
         return jsonify({'cart': _serialize_cart(cart, db)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @cart_bp.route('/remove', methods=['DELETE'])
@@ -78,7 +80,8 @@ def remove():
         cart = remove_item_from_cart(db, user_id, product_id, size, color)
         return jsonify({'cart': _serialize_cart(cart, db)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @cart_bp.route('/update', methods=['PUT'])
@@ -95,7 +98,8 @@ def update():
         cart = update_cart_item_quantity(db, user_id, product_id, size, color, quantity)
         return jsonify({'cart': _serialize_cart(cart, db)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @cart_bp.route('/clear', methods=['DELETE'])
@@ -107,4 +111,5 @@ def clear():
         clear_cart(db, user_id)
         return jsonify({'message': 'Cart cleared'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500

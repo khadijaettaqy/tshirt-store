@@ -30,7 +30,8 @@ def get_profile():
             return jsonify({'error': 'User not found'}), 404
         return jsonify({'user': _user_to_dict(user)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @users_bp.route('/profile', methods=['PUT'])
@@ -46,7 +47,8 @@ def update_profile():
         user = find_user_by_id(db, user_id)
         return jsonify({'user': _user_to_dict(user)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @users_bp.route('/wishlist', methods=['GET'])
@@ -68,7 +70,8 @@ def get_wishlist_route():
                 products.append(p)
         return jsonify({'wishlist': products}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @users_bp.route('/wishlist/<product_id>', methods=['POST'])
@@ -83,7 +86,8 @@ def add_to_wishlist_route(product_id):
         add_to_wishlist(db, user_id, product_id)
         return jsonify({'message': 'Added to wishlist'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @users_bp.route('/wishlist/<product_id>', methods=['DELETE'])
@@ -95,4 +99,5 @@ def remove_from_wishlist_route(product_id):
         remove_from_wishlist(db, user_id, product_id)
         return jsonify({'message': 'Removed from wishlist'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500

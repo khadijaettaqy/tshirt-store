@@ -45,7 +45,8 @@ def list_products():
             'pages': (total + limit - 1) // limit
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @products_bp.route('/search', methods=['GET'])
@@ -63,7 +64,8 @@ def search():
             'pages': (total + limit - 1) // limit
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @products_bp.route('/categories', methods=['GET'])
@@ -73,7 +75,8 @@ def categories():
         cats = db.products.distinct('category', {'is_active': True})
         return jsonify({'categories': cats}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @products_bp.route('/<product_id>', methods=['GET'])
@@ -88,7 +91,8 @@ def get_product(product_id):
         serialized['recent_reviews'] = [_serialize_review(r) for r in reviews]
         return jsonify({'product': serialized}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 def _serialize_review(r):
@@ -116,7 +120,8 @@ def create():
         product = create_product(db, data)
         return jsonify({'product': _serialize_product(product)}), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @products_bp.route('/<product_id>', methods=['PUT'])
@@ -134,7 +139,8 @@ def update(product_id):
         product = find_product_by_id(db, product_id)
         return jsonify({'product': _serialize_product(product)}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @products_bp.route('/<product_id>', methods=['DELETE'])
@@ -150,4 +156,5 @@ def delete(product_id):
             return jsonify({'error': 'Product not found'}), 404
         return jsonify({'message': 'Product deleted'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500

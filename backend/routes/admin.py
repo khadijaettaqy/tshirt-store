@@ -53,7 +53,8 @@ def dashboard():
             'recent_orders': recent_orders
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @admin_bp.route('/sales-analytics', methods=['GET'])
@@ -86,7 +87,8 @@ def sales_analytics():
             del d['_id']
         return jsonify({'sales_data': data}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @admin_bp.route('/users', methods=['GET'])
@@ -109,7 +111,8 @@ def list_users():
             users.append(u)
         return jsonify({'users': users, 'total': total, 'page': page}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @admin_bp.route('/users/<user_id>', methods=['PUT'])
@@ -127,7 +130,8 @@ def update_user_route(user_id):
         db.users.update_one({'_id': ObjectId(user_id)}, {'$set': update_data})
         return jsonify({'message': 'User updated'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @admin_bp.route('/inventory', methods=['GET'])
@@ -151,7 +155,8 @@ def inventory():
                 p['updated_at'] = p['updated_at'].isoformat()
         return jsonify({'products': products, 'low_stock': low_stock}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @admin_bp.route('/orders', methods=['GET'])
@@ -178,7 +183,8 @@ def list_orders():
             serialized.append(o)
         return jsonify({'orders': serialized, 'total': total, 'page': page}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @admin_bp.route('/orders/<order_id>/status', methods=['PUT'])
@@ -196,7 +202,8 @@ def update_status(order_id):
         update_order_status(db, order_id, status)
         return jsonify({'message': 'Order status updated'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @admin_bp.route('/navigation-analytics', methods=['GET'])
@@ -228,4 +235,5 @@ def navigation_analytics():
             'device_breakdown': device_breakdown
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500

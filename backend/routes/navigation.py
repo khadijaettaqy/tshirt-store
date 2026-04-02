@@ -56,7 +56,8 @@ def track():
         )
         return jsonify({'visit_id': str(visit['_id'])}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @navigation_bp.route('/history', methods=['GET'])
@@ -79,7 +80,8 @@ def history():
             serialized.append(v)
         return jsonify({'history': serialized}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @navigation_bp.route('/admin/analytics', methods=['GET'])
@@ -118,4 +120,5 @@ def analytics():
             'device_breakdown': device_breakdown
         }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f'Unexpected error in {__name__}: {e}', exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
