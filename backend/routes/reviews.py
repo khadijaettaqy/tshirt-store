@@ -41,9 +41,10 @@ def create():
             return jsonify({'error': 'Rating must be between 1 and 5'}), 400
 
         db = current_app.db
-        # Check for existing review
+        # Prevent duplicate reviews from the same user on the same product
         from bson import ObjectId as _ObjId
-        existing = db.reviews.find_one({'product_id': _ObjId(product_id), 'user_id': _ObjId(user_id)})
+        if db.reviews.find_one({'product_id': _ObjId(product_id), 'user_id': _ObjId(user_id)}):
+            return jsonify({'error': 'You have already reviewed this product'}), 409
 
         review = create_review(db, product_id, user_id, rating, comment)
         add_review_to_product(db, product_id, str(review['_id']), int(rating))
